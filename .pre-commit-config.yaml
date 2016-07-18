@@ -1,0 +1,32 @@
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    sha: 3fa02652357ff0dbb42b5bc78c673b7bc105fcf3
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: autopep8-wrapper
+        args:
+        - -i
+        - --ignore=E265,E309,E501
+    -   id: check-docstring-first
+    -   id: check-json
+    -   id: check-added-large-files
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: double-quote-string-fixer
+    -   id: name-tests-test
+    -   id: requirements-txt-fixer
+    -   id: flake8
+        exclude: ^docs
+    -   id: pretty-format-json
+        args: [--autofix, --indent, '4']
+    -   id: fix-encoding-pragma
+-   repo: https://github.com/pre-commit/pre-commit
+    sha: ea05189c28084e42014b20eae3a1130ea14c9d93
+    hooks:
+    -   id: validate_config
+    -   id: validate_manifest
+-   repo: https://github.com/asottile/reorder_python_imports
+    sha: b022734351abe44d0b05a71a4fa1175287c59b49
+    hooks:
+    -   id: reorder-python-imports
+        language_version: python2.7
