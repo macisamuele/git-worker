@@ -87,3 +87,10 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# IDE folders
+.idea
+
+# Personal Configurations
+config.json
+

@@ -44,5 +44,8 @@ digraph G {
 }
 )
 
+## Initial Setup
+The environment setup is realized by ``make`` or alternativelly ``make install-hooks``. It will create the needed python virtual environment and install the [``pre_commit``](https://github.com/pre-commit/pre-commit) package on your ``venv``.
+
 ## Configuration
 TODO
