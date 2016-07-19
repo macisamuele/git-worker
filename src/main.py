@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from sys import argv
 
-from configuration import Configuration
+from worker import Worker
 
 
 def main(args):
-    configuration = Configuration()
-    configuration.parse(args)
-    if configuration.config is None:
+    worker = Worker(args)
+    if worker.configuration is None:
         return 0
-    print configuration.config
+    print worker.configuration
     return 0
 
 if __name__ == '__main__':
