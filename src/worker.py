@@ -9,7 +9,7 @@ import return_codes
 from autologging import TRACE
 from autologging import traced
 from configuration import Configuration
-from git_commands import GitCmd
+from git_commands import GitCommand
 
 logging.basicConfig(level=TRACE, stream=stderr,
                     format='%(levelname)s | %(name)s | %(funcName)s:%(lineno)s | %(message)s')
@@ -62,7 +62,7 @@ class RepositoryWorker(AbstractWorker):
         super(RepositoryWorker, self).__init__()
         self.configuration = configuration
         if configuration is not None:
-            self.repository_cmds = GitCmd(configuration['repository'])
+            self.repository_cmds = GitCommand(configuration['repository'])
 
     def _is_master_branch(self):
         return self.repository_cmds.current_branch() == self.configuration['master_branch']

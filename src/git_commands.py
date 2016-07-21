@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """An encapsulation of shelled out git commands."""
-
 import subprocess
 
 
-class Gitcommand:
+class GitCommand:
     repository_path = None
 
     def __init__(self, repository_path):

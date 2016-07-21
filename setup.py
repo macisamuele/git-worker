@@ -21,5 +21,11 @@ setup(
         'argparse',
         'jsonschema >= 2.5.1',
         'simplejson >= 3.8.2',
+        'Autologging >= 1.0.1',
     ],
+    tests_require=[
+        'pytest >= 3.0',
+        'docker-py',
+    ]
+
 )
