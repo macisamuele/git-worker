@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import subprocess
 from abc import ABCMeta
 from abc import abstractmethod
 from sys import stderr
@@ -8,6 +9,7 @@ import return_codes
 from autologging import TRACE
 from autologging import traced
 from configuration import Configuration
+from git_commands import GitCmd
 
 logging.basicConfig(level=TRACE, stream=stderr,
                     format='%(levelname)s | %(name)s | %(funcName)s:%(lineno)s | %(message)s')
@@ -54,30 +56,56 @@ class RepositoryWorker(AbstractWorker):
     """
 
     configuration = None
-    repository = None
+    repository_cmds = None
 
     def __init__(self, configuration):
         super(RepositoryWorker, self).__init__()
         self.configuration = configuration
         if configuration is not None:
-            self.repository = configuration['repository']
+            self.repository_cmds = GitCmd(configuration['repository'])
 
     def _is_master_branch(self):
-        pass
+        return self.repository_cmds.current_branch() == self.configuration['master_branch']
 
     def _is_your_feature_branch(self):
-        pass
+        return self.configuration['feature_branches'].match(self.repository_cmds.current_branch()) is not None
+
+    def _merge_rebase(self):
+        if self.configuration['update_strategy'] == 'merge':
+            return self.repository_cmds.merge(self.configuration['master_branch'])
+        elif self.configuration['update_strategy'] == 'rebase':
+            return self.repository_cmds.rebase(self.configuration['master_branch'])
+
+    def _merge_rebase_abort(self):
+        if self.configuration['update_strategy'] == 'merge':
+            return self.repository_cmds.merge_abort()
+        elif self.configuration['update_strategy'] == 'rebase':
+            return self.repository_cmds.rebase_abort()
 
     @traced(logging.getLogger('RepositoryWorker'))
     def _start(self):
         if self._is_master_branch():
-            self.repository.remotes[self.configuration['git_remote']].pull()
+            return self.repository_cmds.pull('{remote} {branch}'.format(
+                remote=self.configuration['git_remote'],
+                branch=self.configuration['master_branch'],
+            ))
         elif self._is_your_feature_branch():
-            # fetch
-            # merge / rebase
-            # build
-            # test
-            pass
+            if not self.repository_cmds.fetch('{remote} {branch}'.format(
+                remote=self.configuration['git_remote'],
+                branch=self.configuration['master_branch'],
+            )):
+                return False
+            self.repository_cmds.fetch(self.configuration['master_branch'])
+            if not self._merge_rebase():
+                self._merge_rebase_abort()
+                return False
+            try:
+                subprocess.check_call(self.configuration['build_command'].split())
+                subprocess.check_call(self.configuration['test_command'].split())
+            except subprocess.CalledProcessError:
+                self._merge_rebase_abort()
+                return False
+
         return True
 
     @traced(logging.getLogger('RepositoryWorker'))
@@ -86,7 +114,7 @@ class RepositoryWorker(AbstractWorker):
 
     @traced(logging.getLogger('RepositoryWorker'))
     def _pre_start(self):
-        if self.configuration is None or self.repository is None:
+        if self.configuration is None or self.repository_cmds is None:
             return return_codes.ConfigurationError()
 
     def __repr__(self):
