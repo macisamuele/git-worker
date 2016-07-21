@@ -10,8 +10,6 @@ from os.path import join
 from re import compile as regex_compile
 from re import error as regex_error
 
-from git import InvalidGitRepositoryError
-from git import Repo
 from jsonschema import SchemaError
 from jsonschema import validate
 from jsonschema import ValidationError
@@ -57,9 +55,9 @@ class Configuration:
 
     @staticmethod
     def _validate_repository(repository_path):
-        try:
-            return Repo(repository_path)
-        except InvalidGitRepositoryError:
+        if exists(join(repository_path, '.git')):
+            return repository_path
+        else:
             raise ConfigurationError('Invalid Repository Path: {repository_path}'.format(repository_path=repository_path))
 
     def _validate_args(self, argparse_config):

@@ -54,13 +54,30 @@ class RepositoryWorker(AbstractWorker):
     """
 
     configuration = None
+    repository = None
 
     def __init__(self, configuration):
         super(RepositoryWorker, self).__init__()
         self.configuration = configuration
+        if configuration is not None:
+            self.repository = configuration['repository']
+
+    def _is_master_branch(self):
+        pass
+
+    def _is_your_feature_branch(self):
+        pass
 
     @traced(logging.getLogger('RepositoryWorker'))
     def _start(self):
+        if self._is_master_branch():
+            self.repository.remotes[self.configuration['git_remote']].pull()
+        elif self._is_your_feature_branch():
+            # fetch
+            # merge / rebase
+            # build
+            # test
+            pass
         return True
 
     @traced(logging.getLogger('RepositoryWorker'))
@@ -69,7 +86,8 @@ class RepositoryWorker(AbstractWorker):
 
     @traced(logging.getLogger('RepositoryWorker'))
     def _pre_start(self):
-        pass
+        if self.configuration is None or self.repository is None:
+            return return_codes.ConfigurationError()
 
     def __repr__(self):
         return str(self.configuration['repository'].git_dir)

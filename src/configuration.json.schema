@@ -15,6 +15,12 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "git_remote": {
+                    "description": "Name of the remote that will be used for pull / fetch activities",
+                    "type": "string",
+                    "format": "uri",
+                    "minLength": 1
+                },
                 "master_branch": {
                     "description": "Default name of the master branch on all yours repository",
                     "type": "string",
@@ -24,9 +30,13 @@
                     "description": "Command used to run the tests, from the shell, on the current branch. NOTE: the command has to return 0 in case of success",
                     "type": "string",
                     "minLength": 1
+                },
+                "update_strategy": {
+                    "description": "Define how the feature branch is 'updated' with master: merge or rebase.",
+                    "enum": ["merge", "rebase"]
                 }
             },
-            "required": ["build_command", "feature_branches", "master_branch",  "test_command"]
+            "required": ["build_command", "feature_branches", "git_remote", "master_branch",  "test_command", "update_strategy"]
         },
         "repositories": {
             "description": "All the repositories that will be analysed by the worker. The property values will represent the path to the repository.",
@@ -44,6 +54,12 @@
                         "type": "string",
                         "minLength": 1
                     },
+                    "git_remote": {
+                        "description": "Name of the remote that will be used for pull / fetch activities",
+                        "type": "string",
+                        "format": "uri",
+                        "minLength": 1
+                    },
                     "master_branch": {
                         "description": "Default name of the master branch on all yours repository",
                         "type": "string",
@@ -53,6 +69,10 @@
                         "description": "Command used to run the tests, from the shell, on the current branch. NOTE: the command has to return 0 in case of success",
                         "type": "string",
                         "minLength": 1
+                    },
+                    "update_strategy": {
+                        "description": "Define how the feature branch is 'updated' with master: merge or rebase",
+                        "enum": ["merge", "rebase"]
                     }
                 }
             },
