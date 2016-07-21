@@ -19,7 +19,6 @@ setup(
     include_package_data=True,
     install_requires=[
         'argparse',
-        'GitPython >= 2.0.6',
         'jsonschema >= 2.5.1',
         'simplejson >= 3.8.2',
     ],
