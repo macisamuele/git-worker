@@ -1,28 +1,53 @@
 # -*- coding: utf-8 -*-
-class GitCmd:
+"""An encapsulation of shelled out git commands."""
+
+import subprocess
+
+
+class Gitcommand:
     repository_path = None
 
     def __init__(self, repository_path):
         self.repository_path = repository_path
 
+    def _do_command(self, command):
+        """Generic command runner."""
+        args = command.split()
+        try:
+            results = subprocess.check_output(args, cwd=self.repository_path)
+            success = True
+        except subprocess.CalledProcessError:
+            results = ''
+            success = False
+
+        return results, success
+
     def current_branch(self):
         # git rev-parse --abbrev-ref HEAD
-        pass
+        command = 'git rev-parse --abbrev-ref HEAD'
 
-    def pull(self):
-        pass
+        return self._do_command(command)
 
-    def fetch(self):
-        pass
+    def pull(self, options=''):
+        command = 'git pull {options}'.format(options=options)
+        return self._do_comand(command)
 
-    def merge(self):
-        pass
+    def fetch(self, options=''):
+        command = 'git fetch {options}'.format(options=options)
+        return self._do_command(command)
 
-    def rebase(self):
-        pass
+    def merge(self, options=''):
+        command = 'git merge {options}'.format(options=options)
+        return self._do_command(command)
+
+    def rebase(self, options):
+        command = 'git rebase {options}'.format(options=options)
+        return self._do_command(command)
 
     def merge_abort(self):
-        pass
+        command = 'git merge --abort'
+        return self._do_command(command)
 
     def rebase_abort(self):
-        pass
+        command = 'git rebase --abort'
+        return self._do_command(command)
