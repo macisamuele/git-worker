@@ -23,7 +23,6 @@ class Gitcommand:
         return results, success
 
     def current_branch(self):
-        # git rev-parse --abbrev-ref HEAD
         command = 'git rev-parse --abbrev-ref HEAD'
 
         return self._do_command(command)
