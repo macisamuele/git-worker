@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os.path
+import subprocess
+from shutil import rmtree
+from time import sleep
 
 import pytest
 from docker import Client
@@ -79,6 +82,7 @@ def start_stop_docker_container(build_docker_container, docker_client):
             container,
             container_info['docker-port']
         )[0]['HostPort']
+        sleep(4)
 
     def teardown():
         docker_client.remove_container(container=container_info, force=True)
@@ -93,11 +97,24 @@ def start_stop_docker_container(build_docker_container, docker_client):
 
 @pytest.fixture
 def git_server(start_stop_docker_container):
+    def _do_command(command, cwd=None):
+        """Generic command runner."""
+        args = command.split()
+        results = subprocess.check_output(args, cwd=cwd)
+        return results
 
-    pass
+    repo_directory = os.path.join(os.path.dirname(__file__), 'test')
+    rmtree(repo_directory, ignore_errors=True)
+
+    _do_command('git clone {git_server}/test.git'.format(
+        git_server=start_stop_docker_container,
+    ), cwd=os.path.dirname(repo_directory))
+    _do_command('touch .gitignore', cwd=repo_directory)
+    _do_command('git add .gitignore', cwd=repo_directory)
+    _do_command('git commit -m InitialCommit', cwd=repo_directory)
 
 
-def test_worker1(git_server):
+def test_(git_server):
     assert True
 
 
