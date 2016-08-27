@@ -23,12 +23,17 @@ class GitCommand:
 
     def current_branch(self):
         command = 'git rev-parse --abbrev-ref HEAD'
-
         return self._do_command(command)
+
+    def current_branch_sha(self, short=False):
+        command = 'git rev-parse {param} HEAD'.format(
+            param='--short' if short else ''
+        )
+        return self._do_command(command)[0].strip()
 
     def pull(self, options=''):
         command = 'git pull {options}'.format(options=options)
-        return self._do_comand(command)
+        return self._do_command(command)
 
     def fetch(self, options=''):
         command = 'git fetch {options}'.format(options=options)
